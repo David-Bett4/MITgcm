@@ -37,11 +37,14 @@ c     INTEGER iarr, tarr
      &     streamice_density_firn,
      &     B_glen_isothermal, n_glen, eps_glen_min, eps_u_min,
      &     C_basal_fric_const, n_basal_friction,
-     &     streamice_vel_update,streamice_cg_tol,streamice_nonlin_tol,
+     &     streamice_vel_update, streamice_couple_time,
+     &     streamice_cg_tol,streamice_nonlin_tol,
      &     streamice_nonlin_tol_fp, streamice_err_norm,
      &     streamice_max_cg_iter, streamice_max_nl_iter,
      &     streamice_maxcgiter_cpl, streamice_maxnliter_cpl,
      &     STREAMICEthickInit,
+     &     STREAMICE_U_vel_input,
+     &     STREAMICE_V_vel_input,
      &     STREAMICEsigcoordInit,
      &     STREAMICEsigcoordFile,
      &     STREAMICEthickFile,
@@ -52,6 +55,7 @@ c     INTEGER iarr, tarr
      &     STREAMICE_move_front,
      &     STREAMICE_calve_to_mask,
      &     STREAMICE_diagnostic_only,
+     &     STREAMICE_vel_read_in,
      &     STREAMICE_lower_cg_tol,
      &     streamice_CFL_factor,
      &     streamice_adjDump,
@@ -202,6 +206,7 @@ C--   Default values for STREAMICE
       C_basal_fric_const = 31.71 ! Pa (m/a)-1n
       n_basal_friction = -1.
       streamice_vel_update = deltaT ! seconds
+      streamice_couple_time = 0.
       streamice_cg_tol = 1e-6
       streamice_nonlin_tol = 1e-6
       streamice_nonlin_tol_fp = 1.e-14
@@ -246,6 +251,8 @@ c      streamice_n_sub_regularize = 4
 
       STREAMICEthickInit = 'FILE'
       STREAMICEthickFile = ' '
+      STREAMICE_U_vel_input = ' '
+      STREAMICE_V_vel_input = ' '
       STREAMICEcalveMaskFile = ' '
       STREAMICEsigcoordInit = 'UNIFORM'
       STREAMICEsigcoordFile = ' '
@@ -315,6 +322,7 @@ c       STREAMICE_geom_file_setup = .FALSE.
 c      STREAMICE_construct_matrix = .TRUE.
       STREAMICE_lower_cg_tol = .FALSE.
       STREAMICE_diagnostic_only = .FALSE.
+      STREAMICE_vel_read_in = .FALSE.
 #ifdef STREAMICE_FLOWLINE_BUTTRESS
       useStreamiceFlowlineButtr=.FALSE.
 #endif
