@@ -73,6 +73,7 @@ CADJ STORE streamice_hmask  = comlev1, key=ikey_dynamics
       ENDDO
 #endif
 
+      IF (.not.STREAMICE_vel_read_in) THEN
 
       DO bj=myByLo(myThid),myByHi(myThid)
        DO bi=myBxLo(myThid),myBxHi(myThid)
@@ -159,7 +160,86 @@ CADJ STORE streamice_hmask  = comlev1, key=ikey_dynamics
         ENDDO
        ENDDO
       ENDDO
+      
+      ELSEIF (STREAMICE_vel_read_in) THEN
+      
+      DO bj=myByLo(myThid),myByHi(myThid)
+        DO bi=myBxLo(myThid),myBxHi(myThid)
+         DO j=1,sNy+1
+          DO i=1,sNx+1
 
+          utrans(i,j,bi,bj) = u_streamice(i,j,bi,bj)
+          vtrans(i,j,bi,bj) = v_streamice(i,j,bi,bj)
+
+          H_streamice_prev(i,j,bi,bj) =
+     &     H_streamice(i,j,bi,bj)
+
+          hflux_x_SI (i,j,bi,bj) = 0. _d 0
+          hflux_y_SI (i,j,bi,bj) = 0. _d 0
+
+          IF (STREAMICE_hmask(i,j,bi,bj).eq.1.0) THEN
+           h_after_uflux_SI(i,j,bi,bj) = 0. _d 0
+           h_after_vflux_SI(i,j,bi,bj) = 0. _d 0
+          ELSE
+           h_after_uflux_SI(i,j,bi,bj) = H_streamice(i,j,bi,bj)
+           h_after_vflux_SI(i,j,bi,bj) = H_streamice(i,j,bi,bj)
+          ENDIF
+
+
+          IF (STREAMICE_ufacemask(i,j,bi,bj).eq.3.0) THEN
+           BCMASKX(i,j,bi,bj) = 3.0
+           BCVALX(i,j,bi,bj) = h_ubdry_values_SI(i,j,bi,bj)
+          ELSEIF (STREAMICE_ufacemask(i,j,bi,bj).eq.4.0) THEN
+           IF (STREAMICE_hmask(i,j,bi,bj).eq.1.0) THEN
+            uflux = u_flux_bdry_SI(i,j,bi,bj)
+            BCMASKX(i,j,bi,bj) = 3.0
+            BCVALX(i,j,bi,bj) = uflux
+           ELSEIF (STREAMICE_hmask(i-1,j,bi,bj).eq.1.0) THEN
+            uflux = u_flux_bdry_SI(i,j,bi,bj)
+            BCMASKX(i,j,bi,bj) = 3.0
+            BCVALX(i,j,bi,bj) = uflux
+           ENDIF
+          ELSEIF (.not.(
+     &     STREAMICE_hmask(i,j,bi,bj).eq.1.0.OR.
+     &     STREAMICE_hmask(i-1,j,bi,bj).eq.1.0)) THEN
+           BCMASKX(i,j,bi,bj) = 0.0
+           BCVALX(i,j,bi,bj) = 0. _d 0
+           ELSE
+           BCMASKX(i,j,bi,bj) = 0.0
+           BCVALX(i,j,bi,bj) = 0. _d 0
+          ENDIF
+
+          IF (STREAMICE_vfacemask(i,j,bi,bj).eq.3.0) THEN
+           BCMASKy(i,j,bi,bj) = 3.0
+           BCVALy(i,j,bi,bj) = h_vbdry_values_SI(i,j,bi,bj)
+          ELSEIF (STREAMICE_vfacemask(i,j,bi,bj).eq.4.0) THEN
+           IF (STREAMICE_hmask(i,j,bi,bj).eq.1.0) THEN
+            vflux = v_flux_bdry_SI(i,j,bi,bj)
+            BCMASKY(i,j,bi,bj) = 3.0
+            BCVALY(i,j,bi,bj) = vflux
+           ELSEIF (STREAMICE_hmask(i,j-1,bi,bj).eq.1.0) THEN
+            vflux = v_flux_bdry_SI(i,j,bi,bj)
+            BCMASKY(i,j,bi,bj) = 3.0
+            BCVALY(i,j,bi,bj) = vflux
+           ENDIF
+           
+           ELSEIF (.not.(
+     &     STREAMICE_hmask(i,j,bi,bj).eq.1.0.OR.
+     &     STREAMICE_hmask(i,j-1,bi,bj).eq.1.0)) THEN
+           BCMASKY(i,j,bi,bj) = 0.0
+           BCVALY(i,j,bi,bj) = 0. _d 0
+          ELSE
+           BCMASKy(i,j,bi,bj) = 0.0
+           BCVALy(i,j,bi,bj) = 0. _d 0
+          ENDIF
+
+          ENDDO
+         ENDDO
+        ENDDO
+       ENDDO
+      ENDIF
+
+      
       _EXCH_XY_RL(utrans,myThid)
       _EXCH_XY_RL(vtrans,myThid)
       _EXCH_XY_RS(BCMASKx,myThid)
