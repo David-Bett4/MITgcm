@@ -65,8 +65,9 @@ C     streamice_forcing_period    :: forcing freq (s)
      & streamice_density, streamice_density_ocean_avg,
      & B_glen_isothermal, n_glen, eps_glen_min, eps_u_min,
      & C_basal_fric_const, n_basal_friction, streamice_input_flux_unif,
-     & streamice_vel_update, streamice_cg_tol, streamice_nonlin_tol,
-     & streamice_nonlin_tol_fp, streamice_err_norm,
+     & streamice_vel_update, streamice_couple_time, streamice_cg_tol, 
+     & streamice_nonlin_tol, streamice_nonlin_tol_fp, 
+     & streamice_err_norm,
 #if (defined (ALLOW_OPENAD) && defined (ALLOW_STREAMICE_OAD_FP))
      & streamice_nonlin_tol_adjoint,
 #endif
@@ -91,6 +92,7 @@ C     streamice_forcing_period    :: forcing freq (s)
       _RL n_basal_friction
       _RL streamice_input_flux_unif
       _RL streamice_vel_update
+      _RL streamice_couple_time
       _RL streamice_cg_tol, streamice_nonlin_tol
       _RL streamice_nonlin_tol_fp
       _RL streamice_err_norm
@@ -287,6 +289,8 @@ C                                     (will not work in parallel)
 C       see https://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/PC/
 
       CHARACTER*(MAX_LEN_FNAM) STREAMICEthickFile
+      CHARACTER*(MAX_LEN_FNAM) STREAMICE_U_vel_input
+      CHARACTER*(MAX_LEN_FNAM) STREAMICE_V_vel_input
       CHARACTER*(MAX_LEN_FNAM) STREAMICEthickInit
       CHARACTER*(MAX_LEN_FNAM) STREAMICEcalveMaskFile
       CHARACTER*(MAX_LEN_FNAM) STREAMICEsigcoordInit
@@ -351,6 +355,8 @@ c     CHARACTER PARAMS FOR TRACER
       COMMON /STREAMICE_PARM_C/
      &     STREAMICEthickInit,
      &     STREAMICEthickFile,
+     &     STREAMICE_U_vel_input,
+     &     STREAMICE_V_vel_input,
      &     STREAMICEcalveMaskFile,
      &     STREAMICEsigcoordInit,
      &     STREAMICEsigcoordFile,
@@ -456,6 +462,7 @@ C        sheet..." (eqn 11)
       LOGICAL STREAMICE_construct_matrix
       LOGICAL STREAMICE_lower_cg_tol
       LOGICAL STREAMICE_diagnostic_only
+      LOGICAL STREAMICE_vel_read_in
       LOGICAL STREAMICE_ppm_driving_stress
       LOGICAL STREAMICE_h_ctrl_const_surf
       LOGICAL STREAMICE_chkfixedptconvergence
@@ -495,6 +502,7 @@ C      LOGICAL STREAMICE_hybrid_stress
      & STREAMICE_lower_cg_tol,
      & STREAMICE_NS_periodic, STREAMICE_EW_periodic,
      & STREAMICE_diagnostic_only,
+     & STREAMICE_vel_read_in,
      & STREAMICE_ppm_driving_stress,
      & STREAMICE_h_ctrl_const_surf,
      & STREAMICE_chkfixedptconvergence,
