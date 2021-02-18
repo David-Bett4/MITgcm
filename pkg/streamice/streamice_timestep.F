@@ -47,6 +47,7 @@ C     === Global variables ===
        LOGICAL do_vel, tmp_residcheck, tmp_fpcheck
        _RL sum_square_vel_tile (nSx,nSy)
        _RL sum_square_vel
+      INTEGER writeBinaryPre
 
 #ifdef ALLOW_AUTODIFF_TAMC
 c**************************************
@@ -201,6 +202,26 @@ c**************************************
       if(.not.STREAMICE_diagnostic_only) THEN
 
        CALL STREAMICE_ADVECT_THICKNESS ( myThid, myIter, deltaT )
+
+      if(STREAMICE_vel_read_in) THEN
+      if(MOD(NINT(myTime+deltaT),NINT(streamice_couple_time)).eq.0) then
+      PRINT *, "bin_write_before ", writeBinaryPrec
+C       writeBinaryPrec = writeBinaryPre
+        writeBinaryPrec = precFloat64
+      PRINT *, "bin_writepre_during ", writeBinaryPre
+      PRINT *, "bin_writesta_during ", writeBinaryPrec
+
+       CALL WRITE_FLD_XY_RL
+     & ('Streamice_Thickness_out',' ',H_streamice,0,myThid)
+
+        writeBinaryPrec = precFloat32
+
+      PRINT *, "bin_write_after ", writeBinaryPrec
+
+      endif
+      endif
+
+
 
       endif
 
