@@ -205,18 +205,19 @@ c**************************************
 
       if(STREAMICE_vel_read_in) THEN
       if(MOD(NINT(myTime+deltaT),NINT(streamice_couple_time)).eq.0) then
-      PRINT *, "bin_write_before ", writeBinaryPrec
-C       writeBinaryPrec = writeBinaryPre
+C      PRINT *, "bin_write_before ", writeBinaryPrec
+        writeBinaryPre = writeBinaryPrec
         writeBinaryPrec = precFloat64
-      PRINT *, "bin_writepre_during ", writeBinaryPre
-      PRINT *, "bin_writesta_during ", writeBinaryPrec
+C      PRINT *, "bin_writepre_during ", writeBinaryPre
+C      PRINT *, "bin_writesta_during ", writeBinaryPrec
 
        CALL WRITE_FLD_XY_RL
      & ('Streamice_Thickness_out',' ',H_streamice,0,myThid)
 
-        writeBinaryPrec = precFloat32
+C        writeBinaryPrec = precFloat32
+         writeBinaryPrec = writeBinaryPre
 
-      PRINT *, "bin_write_after ", writeBinaryPrec
+C      PRINT *, "bin_write_after ", writeBinaryPrec
 
       endif
       endif
