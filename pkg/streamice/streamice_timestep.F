@@ -125,7 +125,21 @@ c**************************************
       CALL STREAMICE_FIELDS_LOAD( myTime, myIter, myThid )
 #endif
 
+      if(STREAMICE_vel_read_in) THEN
+      if(MOD(NINT(myTime),NINT(streamice_couple_time)).eq.0
+     &.OR. NINT(myTime).eq.0) then
+       CALL READ_FLD_XY_RL
+     & (streamice_U_vel_input,' ',U_streamice,0,myThid)
+       
+       CALL READ_FLD_XY_RL
+     & (streamice_V_vel_input,' ',V_streamice,0,myThid)
 
+      PRINT *, "vel_read "
+
+      endif
+      endif
+
+      if(.not.STREAMICE_vel_read_in) THEN     
 #if (defined (ALLOW_STREAMICE_OAD_FP))
 
        CALL STREAMICE_VEL_SOLVE_OPENAD ( myThid,
@@ -182,7 +196,8 @@ c**************************************
       
 
 #endif
-
+      endif
+      
       if(.not.STREAMICE_diagnostic_only) THEN
 
        CALL STREAMICE_ADVECT_THICKNESS ( myThid, myIter, deltaT )
