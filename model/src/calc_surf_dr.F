@@ -1,5 +1,8 @@
 #include "PACKAGES_CONFIG.h"
 #include "CPP_OPTIONS.h"
+#ifdef ALLOW_SHELFICE
+# include "SHELFICE_OPTIONS.h"
+#endif
 
 CBOP
 C     !ROUTINE: CALC_SURF_DR
@@ -157,6 +160,12 @@ c           IF(ks.EQ.kSurfC(i,j,bi,bj))   hhp = rSurftmp(i,j)
             hFac_surfW(i,j,bi,bj) = h0FacW(i,j,ks,bi,bj)
      &            + ( MIN(hhm,hhp) - rSurfW(i,j,bi,bj)
      &              )*recip_drF(ks)*maskW(i,j,ks,bi,bj)
+#ifdef ALLOW_SHELFICE_REMESHING
+#ifdef ALLOW_SHELFICE_GROUNDED_ICE
+            hFac_surfW(i,j,bi,bj) = 
+     &        max(hFac_surfW(i,j,bi,bj),0. _d 0)
+#endif
+#endif
           ENDIF
          ENDDO
         ENDDO
@@ -177,6 +186,12 @@ c           IF(ks.EQ.kSurfC(i,j,bi,bj))   hhp = rSurftmp(i,j)
             hFac_surfS(i,j,bi,bj) = h0FacS(i,j,ks,bi,bj)
      &            + ( MIN(hhm,hhp) - rSurfS(i,j,bi,bj)
      &              )*recip_drF(ks)*maskS(i,j,ks,bi,bj)
+#ifdef ALLOW_SHELFICE_REMESHING
+#ifdef ALLOW_SHELFICE_GROUNDED_ICE
+            hFac_surfS(i,j,bi,bj) = 
+     &        max(hFac_surfS(i,j,bi,bj),0. _d 0)
+#endif
+#endif
           ENDIF
          ENDDO
         ENDDO

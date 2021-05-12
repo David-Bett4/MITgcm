@@ -103,6 +103,7 @@ c     INTEGER iarr, tarr
      &     STREAMICE_chkresidconvergence,
      &     STREAMICE_alt_driving_stress,
      &     STREAMICE_allow_reg_coulomb,
+     &     STREAMICE_use_log_ctrl,
 #ifdef STREAMICE_FLOWLINE_BUTTRESS
      &     streamice_buttr_width,
      &     useStreamiceFlowlineButtr,
@@ -128,7 +129,8 @@ c     INTEGER iarr, tarr
 
 #if (defined (ALLOW_OPENAD) && defined (ALLOW_STREAMICE_OAD_FP))
       NAMELIST /STREAMICE_PARMOAD/
-     &     streamice_nonlin_tol_adjoint
+     &     streamice_nonlin_tol_adjoint, 
+     &     streamice_nonlin_tol_adjoint_rl
 #ifdef ALLOW_PETSC
      &     ,STREAMICE_OAD_petsc_reuse,
      &     PETSC_PRECOND_OAD
@@ -213,6 +215,7 @@ C--   Default values for STREAMICE
       streamice_err_norm = 0.
 #if (defined (ALLOW_OPENAD) && defined (ALLOW_STREAMICE_OAD_FP))
       streamice_nonlin_tol_adjoint = 1.e-14
+      streamice_nonlin_tol_adjoint_rl = 1.e-14
 #ifdef ALLOW_PETSC
       PETSC_PRECOND_OAD = 'MUMPS'
       STREAMICE_OAD_petsc_reuse =.false.
@@ -333,6 +336,7 @@ c      STREAMICE_construct_matrix = .TRUE.
       STREAMICE_allow_reg_coulomb = .FALSE.
       STREAMICE_h_ctrl_const_surf = .FALSE.
       STREAMICE_allow_cpl = .false.
+      STREAMICE_use_log_ctrl = .false.
 c       STREAMICE_hybrid_stress= .FALSE.
 
       min_x_noflow_NORTH = 0.
